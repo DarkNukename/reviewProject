@@ -11,8 +11,6 @@ from .models import AppDataBase
 
 from uuid import UUID
 
-DEFAULT_PAGE_LIMIT = settings.DEFAULT_PAGE_LIMIT
-
 
 class AppView(APIView):
 
@@ -27,15 +25,22 @@ class AppView(APIView):
     def get(self, request):
 
         params = self.__clear_page_in_request(request)
+        print(params)
 
-        try:
-            vacancies = AppDataBase.objects.filter(**params)
-        except:
-            return Response(status = status.HTTP_400_BAD_REQUEST )
+        if not 'state' in params:
+            params['state'] = "ACTIVE"
+            
+            try:
+                vacancies = AppDataBase.objects.filter(**params)
+            except:
+                return Response(status = status.HTTP_400_BAD_REQUEST )
 
-        paginator = PageNumberPagination()
-        paginator.default_limit = DEFAULT_PAGE_LIMIT
-        page = paginator.paginate_queryset(vacancies, request)
+        else:
+
+            try:
+                vacancies = AppDataBase.objects.filter(**params)
+            except:
+                return Response(status = status.HTTP_400_BAD_REQUEST )
 
         serializer = AppSerializer(vacancies, many = True)
         return Response(data = serializer.data)

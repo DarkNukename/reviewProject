@@ -8,7 +8,6 @@ from uuid import UUID
 from django.core.exceptions import ObjectDoesNotExist
 
 
-
 @periodic_task(run_every = crontab(minute = '*/1'), name = 'app_task')
 def app_task():
 
@@ -22,6 +21,7 @@ def app_task():
 
     my_base = AppDataBase.objects.all()
     n = my_base.count()
+
     for i in range(0, n):
         id_list.append(my_base[i].uuid)
     print(id_list)
